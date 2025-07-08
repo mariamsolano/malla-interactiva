@@ -1,156 +1,135 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Malla Interactiva - Ingeniería Electrónica y Telecomunicaciones</title>
+  <title>Malla Editable - Ingeniería Electrónica y Telecomunicaciones</title>
   <style>
     :root {
-      --bg-color-light: #eef1f5;
-      --bg-color-dark: #121212;
-      --text-color-light: #222;
-      --text-color-dark: #e0e0e0;
-      --card-color-light: #fff;
-      --card-color-dark: #1e1e1e;
+      --bg-light: #eef1f5;
+      --bg-dark: #121212;
+      --text-light: #222;
+      --text-dark: #e0e0e0;
+      --card-light: #fff;
+      --card-dark: #1e1e1e;
     }
-
-    [data-theme="light"] {
-      --bg-color: var(--bg-color-light);
-      --text-color: var(--text-color-light);
-      --card-color: var(--card-color-light);
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: var(--bg-dark);
+        --text: var(--text-dark);
+        --card: var(--card-dark);
+      }
     }
-
-    [data-theme="dark"] {
-      --bg-color: var(--bg-color-dark);
-      --text-color: var(--text-color-dark);
-      --card-color: var(--card-color-dark);
+    @media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
+      :root {
+        --bg: var(--bg-light);
+        --text: var(--text-light);
+        --card: var(--card-light);
+      }
     }
-
     body {
+      background: var(--bg);
+      color: var(--text);
       font-family: 'Segoe UI', sans-serif;
-      background: var(--bg-color);
       margin: 0;
       padding: 2rem;
-      color: var(--text-color);
     }
     h1 {
       text-align: center;
-      margin-bottom: 2rem;
     }
     .grid {
       display: flex;
       gap: 1rem;
       overflow-x: auto;
-      padding-bottom: 2rem;
     }
     .semestre {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      background: var(--card-color);
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      min-width: 260px;
+      background: var(--card);
       padding: 1rem;
+      border-radius: 12px;
+      min-width: 250px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
     .semestre h3 {
       text-align: center;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 0.5rem;
       margin-bottom: 1rem;
     }
     .materia {
       position: relative;
-      padding: 1.5rem 0.75rem 1rem;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      user-select: none;
       border: 1px solid #888;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 1.5rem 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      max-width: 200px;
+      width: 100%;
+      cursor: pointer;
       overflow: hidden;
+      transition: all 0.3s ease;
     }
-    .materia:hover {
-      transform: scale(1.02);
-    }
-    .materia .codigo, .materia .numero, .materia .creditos {
+    .materia[data-area="Matemáticas"]         { background: color-mix(in srgb, #a1c4fd 60%, var(--card)); }
+    .materia[data-area="Física"]              { background: color-mix(in srgb, #d3bfff 60%, var(--card)); }
+    .materia[data-area="Electricidad"]        { background: color-mix(in srgb, #ffb3b3 60%, var(--card)); }
+    .materia[data-area="Electrónica"]         { background: color-mix(in srgb, #ffd6a5 60%, var(--card)); }
+    .materia[data-area="Software"]            { background: color-mix(in srgb, #caffbf 60%, var(--card)); }
+    .materia[data-area="Telecomunicaciones"]  { background: color-mix(in srgb, #b5ead7 60%, var(--card)); }
+    .materia[data-area="Señales"]             { background: color-mix(in srgb, #9bf6ff 60%, var(--card)); }
+    .materia[data-area="Humanísticas"]        { background: color-mix(in srgb, #ffc6ff 60%, var(--card)); }
+    .materia[data-area="Proyectos"]           { background: color-mix(in srgb, #fdffb6 60%, var(--card)); }
+    .materia[data-area="Electiva"]            { background: color-mix(in srgb, #e0c3fc 60%, var(--card)); }
+
+    .materia .numero, .materia .codigo, .materia .creditos {
       position: absolute;
+      font-size: 0.7rem;
+      font-weight: bold;
       background: rgba(255,255,255,0.7);
       padding: 2px 6px;
       border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: bold;
-      z-index: 3;
-    }
-    [data-theme="dark"] .materia .codigo,
-    [data-theme="dark"] .materia .numero,
-    [data-theme="dark"] .materia .creditos {
-      background: rgba(0,0,0,0.6);
-    }
-    .materia .numero {
-      top: 4px;
-      left: 4px;
-    }
-    .materia .codigo {
-      top: 4px;
-      right: 4px;
-    }
-    .materia .creditos {
-      bottom: 4px;
-      right: 4px;
-    }
-    .materia span.contenido {
-      position: relative;
       z-index: 2;
-      display: block;
+    }
+    .materia .numero { top: 4px; left: 4px; }
+    .materia .codigo { top: 4px; right: 4px; }
+    .materia .creditos { bottom: 4px; right: 4px; }
+    .materia span {
+      position: relative;
+      z-index: 1;
       text-align: center;
-      padding-top: 10px;
+      display: block;
     }
     .materia[data-aprobada="true"]::after {
       content: "";
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: linear-gradient(45deg, transparent 49%, var(--text-color) 50%, transparent 51%), linear-gradient(-45deg, transparent 49%, var(--text-color) 50%, transparent 51%);
-      background-size: 100% 2px;
-      background-repeat: no-repeat;
-      background-position: center;
-      z-index: 2;
+      width: 141%;
+      height: 2px;
+      background-color: var(--text);
+      transform: rotate(45deg);
+      transform-origin: top left;
+      z-index: 3;
     }
     .materia[data-bloqueada="true"]::before {
       content: "";
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(255,255,255,0.6);
-      z-index: 4;
+      z-index: 2;
     }
-    [data-theme="dark"] .materia[data-bloqueada="true"]::before {
-      background: rgba(0,0,0,0.6);
+    @media (prefers-color-scheme: dark) {
+      .materia .numero,
+      .materia .codigo,
+      .materia .creditos {
+        background: rgba(0,0,0,0.6);
+      }
+      .materia[data-bloqueada="true"]::before {
+        background: rgba(0,0,0,0.6);
+      }
     }
-    .materia[data-bloqueada="true"] {
-      cursor: not-allowed;
-    }
-    .materia[data-area="Matemáticas"] { background: #a1c4fd; }
-    .materia[data-area="Física"] { background: #d3bfff; }
-    .materia[data-area="Electricidad"] { background: #ffb3b3; }
-    .materia[data-area="Electrónica"] { background: #ffd6a5; }
-    .materia[data-area="Software"] { background: #caffbf; }
-    .materia[data-area="Telecomunicaciones"] { background: #b5ead7; }
-    .materia[data-area="Señales"] { background: #9bf6ff; }
-    .materia[data-area="Humanísticas"] { background: #ffc6ff; }
-    .materia[data-area="Proyectos"] { background: #fdffb6; }
-    .materia[data-area="Electiva"] { background: #e0c3fc; }
   </style>
 </head>
 <body>
-  <h1>Malla Interactiva - Ingeniería Electrónica y Telecomunicaciones</h1>
+  <h1>Malla Editable - Ingeniería Electrónica y Telecomunicaciones</h1>
   <div class="grid" id="contenedor"></div>
+
   <script>
     const materias = [
       { numero: 1, codigo: 'MAT102.1', nombre: 'Álgebra Lineal', semestre: 1, area: 'Matemáticas', creditos: 3 },
